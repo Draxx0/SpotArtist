@@ -1,6 +1,6 @@
 import { Token } from "../types/token";
 
-export async function getBearerToken() {
+export async function getBearerToken(): Promise<undefined | Token> {
   const formData = new URLSearchParams();
   formData.append("grant_type", "client_credentials");
   formData.append("client_id", import.meta.env.VITE_API_CLIENT_ID);
@@ -14,16 +14,18 @@ export async function getBearerToken() {
     body: formData,
   })
     .then((res) => res.json())
-    .then((token: Token) => insertTokenInLocalStorage(token))
+    .then((token: Token) => token)
     .catch((err) => {
       throw new Error(err);
     });
 }
 
-export function insertTokenInLocalStorage(token: Token) {
+export function getTokenFromLocalStorage() {
+  const token = localStorage.getItem("token-storage");
+
   if (!token) {
-    throw new Error("Token is required to be insert in storage !");
+    throw new Error("No token found");
   }
 
-  localStorage.setItem("token", JSON.stringify(token));
+  return JSON.parse(token);
 }
