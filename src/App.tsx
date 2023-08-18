@@ -1,7 +1,10 @@
 import { useCallback, useEffect } from "react";
 import Router from "./router/Router";
 import { useTokenStore } from "./store/store";
-import { getBearerToken } from "./services/tokenService";
+import {
+  getBearerToken,
+  getTokenFromLocalStorage,
+} from "./services/tokenService";
 
 function App() {
   const { insert } = useTokenStore();
@@ -11,13 +14,16 @@ function App() {
     if (!token) {
       throw new Error("There is no token founded ! ");
     }
-    console.log("INSERT TOKEEN", token.access_token);
     insert(token);
   }, [insert]);
 
   useEffect(() => {
+    if (getTokenFromLocalStorage()) {
+      return;
+    }
     insertToken();
   }, [insertToken]);
+
   return <Router />;
 }
 

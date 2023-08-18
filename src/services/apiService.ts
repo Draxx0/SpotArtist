@@ -12,18 +12,18 @@ export async function apiFetch<T>(url: string): Promise<T> {
     throw new Error("Url is required.");
   }
 
+  console.log("token", `${token.token_type} ${token.access_token}`);
+
   const response = await fetch(url, {
+    method: "GET",
     headers: {
-      "Content-Type": "application/json",
       Authorization: `${token.token_type} ${token.access_token}`,
     },
-  });
+  })
+    .then((res) => res.json())
+    .catch((err) => {
+      throw new Error(err);
+    });
 
-  if (!response.ok) {
-    throw new Error("An error occured.");
-  }
-
-  const data = response.json();
-
-  return data;
+  return response;
 }
